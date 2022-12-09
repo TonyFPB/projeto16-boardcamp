@@ -10,3 +10,13 @@ export async function postCategorie(req,res){
         res.sendStatus(500)
     }
 }
+
+export async function getCategories(req,res){
+    try{
+        const categories = await connection.query('SELECT * FROM categories')
+        res.send(categories.rows)
+    }catch(err){
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
