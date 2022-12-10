@@ -5,8 +5,7 @@ export async function categoriesConflict(req,res,next){
     const {name} = req.body
     try{
         const categorieExist = await connection.query(`SELECT * FROM categories WHERE name=$1`,[name])
-        if(categorieExist.rows.length>0){
-            console.log(categorieExist.rows)
+        if(categorieExist.rowCount>0){
             return res.sendStatus(409)
         }
         console.log('passando por conflito')

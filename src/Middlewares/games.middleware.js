@@ -27,7 +27,7 @@ export async function gamesConflict(req,res,next){
     const {name} = req.body
     try{
         const gameExist = await connection.query('SELECT * FROM games WHERE name=$1',[name])
-        if(gameExist.rowCount){
+        if(gameExist.rowCount>0){
             return res.sendStatus(409)
         }
     }catch(err){

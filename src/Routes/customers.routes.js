@@ -1,16 +1,13 @@
 import { Router } from 'express'
-import { postCustomers } from '../Controllers/customers.controller.js'
-import { customersConflict, customersValidate } from '../Middlewares/customers.middleware.js'
+import { getCustomers, getCustomersById, postCustomers } from '../Controllers/customers.controller.js'
+import { customerIdValidate, customersCpfConflict, customersValidate } from '../Middlewares/customers.middleware.js'
 
 const customersRoutes = Router()
 
+customersRoutes.post('/customers', customersValidate, customersCpfConflict, postCustomers)
+customersRoutes.get('/customers', getCustomers)
 
-customersRoutes.post('/customers', customersValidate, customersConflict, postCustomers)
-
-// customersRoutes.get('/customers', getCustomers)
-
-// customersRoutes.get('/customers/:id')
-
-// customersRoutes.put('/customers/:id')
+customersRoutes.get('/customers/:id', customerIdValidate, getCustomersById)
+customersRoutes.put('/customers/:id',customersValidate,customerIdValidate,customersCpfConflict)
 
 export default customersRoutes
