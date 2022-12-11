@@ -5,11 +5,11 @@ import {
     rentalsValidate
 } from '../Middlewares/rentals.middleware.js'
 import { Router } from 'express'
-import { postRental } from '../Controllers/rentals.controller.js'
+import { getRentals, postRental } from '../Controllers/rentals.controller.js'
 
 const rentalsRoutes = Router()
 
-rentalsRoutes.get('/rentals')
+rentalsRoutes.get('/rentals', getRentals)
 
 rentalsRoutes.post('/rentals', rentalsValidate, rentalsCustomerValidate, rentalsGameValidate, rentalDaysValidate, postRental)
 
