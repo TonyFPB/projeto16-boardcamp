@@ -43,17 +43,33 @@ export async function rentalsGameValidate(req, res, next) {
     next()
 }
 
-export async function rentalDaysValidate(req,res,next){
-    const {stockTotal} = req
-    const {gameId} = req.body
-    try{
-        console.log(gameId)
-        const existingRentals = await connection.query('SELECT * FROM rentals WHERE "gameId"=$1 AND "returnDate" IS null',[gameId])
-        console.log(existingRentals.rowCount, '    ', stockTotal)
-        if(existingRentals.rowCount>=stockTotal){
-            return res.status(400).send({message:"Aluguel indeisponivel"})
-        }        
-    }catch(err){
+export async function rentalDaysValidate(req, res, next) {
+    const { stockTotal } = req
+    const { gameId } = req.body
+    try {
+        const existingRentals = await connection.query('SELECT * FROM rentals WHERE "gameId"=$1 AND "returnDate" IS null', [gameId])
+        if (existingRentals.rowCount >= stockTotal) {
+            return res.status(400).send({ message: "Aluguel indeisponivel" })
+        }
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+    next()
+}
+
+export async function rentalReturnValidate(req, res, next) {
+    const { id } = req.params
+    try {
+        if(isNaN(id)){
+            return res.sendStatus(400)
+        }
+        const rentalExist = await connection.query('SELECT * FROM rentals WHERE id=$1', [id])
+        if(rentalExist.rowCount === 0 || rentalExist.rows[0].returnDate){
+            return res.sendStatus(400)
+        }
+        res.locals = rentalExist.rows[0]
+    } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
