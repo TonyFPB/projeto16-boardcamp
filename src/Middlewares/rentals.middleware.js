@@ -84,7 +84,6 @@ export async function rentalDeleteValidate(req, res, next) {
         }
         const rentalExist = await connection.query("SELECT * FROM rentals WHERE id=$1",[id])
         if(rentalExist.rowCount === 0 || !rentalExist.rows[0].returnDate){
-            console.log('OK')
             return res.sendStatus(400)
         }
         

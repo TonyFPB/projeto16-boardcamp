@@ -8,7 +8,6 @@ export async function categoriesConflict(req,res,next){
         if(categorieExist.rowCount>0){
             return res.sendStatus(409)
         }
-        console.log('passando por conflito')
     }catch(err){
         console.log(err)
         res.sendStatus(500)
@@ -23,6 +22,5 @@ export function categoriesValidate(req, res, next) {
         const errors = validation.error.details.map(d => d.message)
         return res.status(400).send({ message: errors })
     }
-    console.log('passando por schema')
     next()
 }

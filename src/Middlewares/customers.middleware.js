@@ -10,7 +10,6 @@ export function customersValidate(req, res, next) {
         const errors = validation.error.details.map(d => d.message)
         return res.status(400).send({ message: errors })
     }
-    console.log(validation.value.birthday)
     res.locals = validation.value
     res.locals.birthday = dayjs(res.locals.birthday).add(1, 'day').format('YYYY-MM-DD')
     next()
