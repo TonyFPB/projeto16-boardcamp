@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getCustomers, getCustomersById, postCustomers } from '../Controllers/customers.controller.js'
+import { getCustomers, getCustomersById, postCustomers, putCustomers } from '../Controllers/customers.controller.js'
 import { customerIdValidate, customersCpfConflict, customersValidate } from '../Middlewares/customers.middleware.js'
 
 const customersRoutes = Router()
@@ -8,6 +8,6 @@ customersRoutes.post('/customers', customersValidate, customersCpfConflict, post
 customersRoutes.get('/customers', getCustomers)
 
 customersRoutes.get('/customers/:id', customerIdValidate, getCustomersById)
-customersRoutes.put('/customers/:id',customersValidate,customerIdValidate,customersCpfConflict)
+customersRoutes.put('/customers/:id',customersValidate,customerIdValidate,customersCpfConflict, putCustomers)
 
 export default customersRoutes

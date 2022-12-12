@@ -10,31 +10,30 @@ export function customersValidate(req, res, next) {
         const errors = validation.error.details.map(d => d.message)
         return res.status(400).send({ message: errors })
     }
+    console.log(validation.value.birthday)
     res.locals = validation.value
-    res.locals.birthday = dayjs(res.locals.birthday).format('YYYY-MM-DD')
+    res.locals.birthday = dayjs(res.locals.birthday).add(1, 'day').format('YYYY-MM-DD')
     next()
 }
 
 export async function customersCpfConflict(req, res, next) {
     const customer = res.locals
+    const {customerExistsId} = req
     const { id } = req.params
     try {
         const customerExists = await connection.query("SELECT * FROM customers WHERE cpf=$1", [customer.cpf])
-        if (id) {
-            const customerExistsId = await connection.query("SELECT * FROM customers WHERE id=$1", [id])
-            if(customerExistsId.rows[0].id !== customerExists.rows[0].id && customerExists.rows[0].cpf === customer.cpf){
+        if (id && customerExists.rowCount>0) {
+            if(customerExistsId.id !== customerExists.rows[0].id && customerExists.rows[0].cpf === customer.cpf){
                 return res.sendStatus(409)
             }
         }
-        if (!id && customerExists.rowCount > 0) {
-            return res.sendStatus(409);
+        if(!id && customerExists.rowCount>0){
+            return res.sendStatus(409)
         }
-
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
     }
-    console.log('passou')
     next()
 }
 
@@ -48,6 +47,7 @@ export async function customerIdValidate(req, res, next) {
         if (customer.rowCount === 0) {
             return res.sendStatus(404)
         }
+        req.customerExistsId = customer.rows[0] 
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
