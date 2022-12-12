@@ -23,7 +23,7 @@ export async function getRentals(req, res) {
     try {
         if (customerId && gameId) {
             const rentals = await connection.query(`
-                SELECT rentals.*,
+                SELECT rentals.*,rentals."rentDate"::text,rentals."returnDate"::text,
                 json_build_object('id',games.id,'name',games.name, 'categoryId', games."categoryId", 'categoryName', categories.name) AS game,
                 json_build_object('id',customers.id,'name',customers.name) AS customer 
                 FROM 
@@ -45,7 +45,7 @@ export async function getRentals(req, res) {
             return res.send(rentals.rows)
         } if (customerId) {
             const rentals = await connection.query(`
-                SELECT rentals.*,
+                SELECT rentals.*,rentals."rentDate"::text,rentals."returnDate"::text,
                 json_build_object('id',games.id,'name',games.name, 'categoryId', games."categoryId", 'categoryName', categories.name) AS game,
                 json_build_object('id',customers.id,'name',customers.name) AS customer 
                 FROM 
@@ -67,7 +67,7 @@ export async function getRentals(req, res) {
             return res.send(rentals.rows)
         } if (gameId) {
             const rentals = await connection.query(`
-                SELECT rentals.*,
+                SELECT rentals.*,rentals."rentDate"::text,rentals."returnDate"::text,
                 json_build_object('id',games.id,'name',games.name, 'categoryId', games."categoryId", 'categoryName', categories.name) AS game,
                 json_build_object('id',customers.id,'name',customers.name) AS customer 
                 FROM 
@@ -90,7 +90,7 @@ export async function getRentals(req, res) {
         }
 
         const rentals = await connection.query(`
-            SELECT rentals.*,
+            SELECT rentals.*,rentals."rentDate"::text,rentals."returnDate"::text,
             json_build_object('id',games.id,'name',games.name, 'categoryId', games."categoryId", 'categoryName', categories.name) AS game,
             json_build_object('id',customers.id,'name',customers.name) AS customer 
             FROM 
@@ -107,7 +107,6 @@ export async function getRentals(req, res) {
             categories
             ON
             games."categoryId" = categories.id
-            
             ORDER BY rentals.id`)
         res.send(rentals.rows)
     } catch (err) {
@@ -130,6 +129,17 @@ export async function postRentalReturn(req, res) {
         await connection.query(`UPDATE rentals SET "returnDate"=$1, "delayFee"=$2 WHERE id=$3;`,[returnDate,0,id])
         res.sendStatus(200)
     } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
+
+export async function deleteRental(req,res){
+    const {id} = req.params
+    try{
+        await connection.query("DELETE FROM rentals WHERE id=$1",[id])
+        res.sendStatus(200)
+    }catch(err){
         console.log(err)
         res.sendStatus(500)
     }

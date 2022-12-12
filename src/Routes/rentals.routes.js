@@ -1,12 +1,13 @@
 import {
     rentalDaysValidate,
+    rentalDeleteValidate,
     rentalReturnValidate,
     rentalsCustomerValidate,
     rentalsGameValidate,
     rentalsValidate
 } from '../Middlewares/rentals.middleware.js'
 import { Router } from 'express'
-import { getRentals, postRental, postRentalReturn } from '../Controllers/rentals.controller.js'
+import { deleteRental, getRentals, postRental, postRentalReturn } from '../Controllers/rentals.controller.js'
 
 const rentalsRoutes = Router()
 
@@ -16,6 +17,6 @@ rentalsRoutes.post('/rentals', rentalsValidate, rentalsCustomerValidate, rentals
 
 rentalsRoutes.post('/rentals/:id/return',rentalReturnValidate, postRentalReturn)
 
-rentalsRoutes.delete('/rentals/:id')
+rentalsRoutes.delete('/rentals/:id',rentalDeleteValidate, deleteRental)
 
 export default rentalsRoutes

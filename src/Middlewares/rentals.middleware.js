@@ -61,15 +61,34 @@ export async function rentalDaysValidate(req, res, next) {
 export async function rentalReturnValidate(req, res, next) {
     const { id } = req.params
     try {
-        if(isNaN(id)){
+        if (isNaN(id)) {
             return res.sendStatus(400)
         }
         const rentalExist = await connection.query('SELECT * FROM rentals WHERE id=$1', [id])
-        if(rentalExist.rowCount === 0 || rentalExist.rows[0].returnDate){
+        if (rentalExist.rowCount === 0 || rentalExist.rows[0].returnDate) {
             return res.sendStatus(400)
         }
         res.locals = rentalExist.rows[0]
     } catch (err) {
+        console.log(err)
+        res.sendStatus(500)
+    }
+    next()
+}
+
+export async function rentalDeleteValidate(req, res, next) {
+    const {id} = req.params
+    try{
+        if(isNaN(id)){
+            return res.sendStatus(400)
+        }
+        const rentalExist = await connection.query("SELECT * FROM rentals WHERE id=$1",[id])
+        if(rentalExist.rowCount === 0 || !rentalExist.rows[0].returnDate){
+            console.log('OK')
+            return res.sendStatus(400)
+        }
+        
+    }catch(err){
         console.log(err)
         res.sendStatus(500)
     }
